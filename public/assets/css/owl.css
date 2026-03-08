@@ -1,0 +1,4 @@
+/* Owl carousel core CSS (trimmed) */
+.owl-carousel{display:block}
+.owl-stage-outer{overflow:hidden}
+.owl-item{float:left}

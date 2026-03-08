@@ -1,0 +1,3 @@
+/* animate.css (trimmed) */
+.animated{animation-duration:1s;animation-fill-mode:both}
+.fadeIn{animation-name:fadeIn}
