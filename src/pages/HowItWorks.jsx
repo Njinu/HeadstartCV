@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import PageHeading from '../components/PageHeading'
+import ApplyForm from '../components/ApplyForm'
 
 export default function HowItWorks(){
   const [status, setStatus] = useState(null)
@@ -106,7 +107,7 @@ export default function HowItWorks(){
               <div className="section-heading">
                 <h2>Most <em>Frequently</em> Asked <span>Questions</span> ?</h2>
                 <div className="line-dec"></div>
-                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doers.</p>
+                <p>Answers to common questions about our services, process and timelines so you know what to expect when working with HeadStart.</p>
               </div>
             </div>
           </div>
@@ -169,41 +170,8 @@ export default function HowItWorks(){
             </div>
             <div className="col-lg-6">
               <div className="get-free-quote">
-                <form id="free-quote" onSubmit={handleSubmit} role="search">
-                  <div className="row">
-                    <div className="col-lg-12">
-                      <div className="section-heading">
-                        <h2>Upload Your <em>CV</em> Now</h2>
-                      </div>
-                    </div>
-                    <div className="col-lg-12">
-                      <fieldset>
-                        <input type="text" name="full-name" id="full-name" placeholder="Full Name" autoComplete="name" required />
-                      </fieldset>
-                    </div>
-                    <div className="col-lg-12">
-                      <fieldset>
-                        <input type="email" name="email" id="email" pattern="[^ @]*@[^ @]*" placeholder="Your E-mail" required />
-                      </fieldset>
-                    </div>
-                    <div className="col-lg-12">
-                      <fieldset>
-                        <input type="phone-number" name="phone-number" id="phone-number" placeholder="Phone Number (optional)" autoComplete="tel" />
-                      </fieldset>
-                    </div>
-                    <div className="col-lg-12">
-                      <fieldset>
-                        <input type="file" name="cv" id="cv" accept=".pdf,.doc,.docx" />
-                      </fieldset>
-                    </div>
-                    <div className="col-lg-12">
-                      <fieldset>
-                        <button type="submit" id="form-submit" className="orange-button">Upload CV</button>
-                      </fieldset>
-                      {status && <p className="mt-2">{status}</p>}
-                    </div>
-                  </div>
-                </form>
+                {/* reuse the new ApplyForm component */}
+                <ApplyForm />
               </div>
             </div>
           </div>

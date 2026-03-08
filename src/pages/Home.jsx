@@ -65,13 +65,13 @@ export default function Home(){
             <div className="row">
               <div className="col-lg-7">
                 <div className="caption header-text">
-                  <h6>SEO DIGITAL AGENCY</h6>
+                  <h6>HEADSTART CAREER SERVICES</h6>
                   <div className="line-dec"></div>
-                  <h4>Dive <em>Into The SEO</em> World <span>With Tale</span></h4>
-                  <p>Tale is the best SEO agency website template using Bootstrap v5.2.2 CSS for your company. It is a free download provided by TemplateMo. There are 3 HTML pages, <a href="/index.html">Home</a>, <a href="/about.html">About</a>, and <a href="/faqs.html">FAQ</a>.</p>
+                  <h4>Accelerate <em>Your Job Search</em> <span>With HeadStart</span></h4>
+                  <p>Professional CV writing, ATS optimisation, LinkedIn profile polish, custom cover letters, and career coaching designed to increase interview invitations and land you the right role.</p>
                   <div className="main-button"><a href="#services">Discover More</a></div>
                   <span>or</span>
-                  <div className="second-button"><a href="/faqs.html">Check our FAQs</a></div>
+                  <div className="second-button"><a href="/how-it-works">Check our FAQs</a></div>
                 </div>
               </div>
             </div>
@@ -86,41 +86,41 @@ export default function Home(){
                 <div className="row">
                   <div className="col-lg-12">
                     <div className="section-heading">
-                      <h2>We Provide <em>Different Services</em> &amp; <span>Features</span> For Your Agency</h2>
+                      <h2>Services to <em>Accelerate</em> Your Job Search &amp; <span>Get You Hired</span></h2>
                       <div className="line-dec"></div>
-                      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doers eiusmod.</p>
+                      <p>Professional CV writing, ATS optimisation, LinkedIn profile optimisation, custom cover letters, and one-to-one coaching to help you land interviews.</p>
                     </div>
                   </div>
                   <div className="col-lg-6 col-sm-6">
                     <div className="service-item">
                       <div className="icon">
-                        <img src="/assets/images/services-01.jpg" alt="discover SEO" className="templatemo-feature" />
+                        <img src="/assets/images/services-01.jpg" alt="CV writing" className="templatemo-feature" />
                       </div>
-                      <h4>Discover More on Latest SEO Trends</h4>
+                      <h4>Professional CV Writing</h4>
                     </div>
                   </div>
                   <div className="col-lg-6 col-sm-6">
                     <div className="service-item">
                       <div className="icon">
-                        <img src="/assets/images/services-02.jpg" alt="data analysis" className="templatemo-feature" />
+                        <img src="/assets/images/services-02.jpg" alt="ATS and LinkedIn optimisation" className="templatemo-feature" />
                       </div>
-                      <h4>Real-Time Big Data Analysis</h4>
+                      <h4>ATS &amp; LinkedIn Optimisation</h4>
                     </div>
                   </div>
                   <div className="col-lg-6 col-sm-6">
                     <div className="service-item">
                       <div className="icon">
-                        <img src="/assets/images/services-03.jpg" alt="precise data" className="templatemo-feature" />
+                        <img src="/assets/images/services-03.jpg" alt="Cover letters" className="templatemo-feature" />
                       </div>
-                      <h4>Precise Data Analysis &amp; Prediction</h4>
+                      <h4>Custom Cover Letters</h4>
                     </div>
                   </div>
                   <div className="col-lg-6 col-sm-6">
                     <div className="service-item">
                       <div className="icon">
-                        <img src="/assets/images/services-04.jpg" alt="SEO marketing" className="templatemo-feature" />
+                        <img src="/assets/images/services-04.jpg" alt="Career coaching and interview prep" className="templatemo-feature" />
                       </div>
-                      <h4>SEO Marketing &amp; Social Media</h4>
+                      <h4>Career Coaching &amp; Interview Prep</h4>
                     </div>
                   </div>
                 </div>
@@ -137,7 +137,7 @@ export default function Home(){
                 <div className="section-heading">
                   <h2>Discover Our <em>Work</em> &amp; <span>Projects</span></h2>
                   <div className="line-dec"></div>
-                  <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doers eiusmod.</p>
+                  <p>Examples of CVs, interview prep outcomes and candidate success stories that show how we help people land roles.</p>
                 </div>
               </div>
             </div>
@@ -213,26 +213,9 @@ export default function Home(){
                       <div className="section-heading">
                         <h2>More <em>About Us</em> &amp; What <span>We Offer</span></h2>
                         <div className="line-dec"></div>
-                        <p>You are free to use this template for any purpose. You are not allowed to redistribute the downloadable ZIP file of Tale SEO Template on any other template website. Please contact us. Thank you.</p>
+                        <p>HeadStart provides expert CV writing, ATS optimisation, LinkedIn profile improvements, targeted cover letters and interview coaching — practical, recruiter-focused services to improve your chances of success.</p>
                       </div>
-                      <div className="skills">
-                        <div className="skill-slide marketing">
-                          <div className="fill"></div>
-                          <h6>Marketing</h6>
-                          <span>90%</span>
-                        </div>
-                        <div className="skill-slide digital">
-                          <div className="fill"></div>
-                          <h6>Ditigal Media</h6>
-                          <span>80%</span>
-                        </div>
-                        <div className="skill-slide media">
-                          <div className="fill"></div>
-                          <h6>Social Media Managing</h6>
-                          <span>95%</span>
-                        </div>
-                      </div>
-                      <p className="more-info">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed doers eiusmod tempor incididunt ut labore et dolore dolor dolor sit amet, consectetur adipiscing elit, sed doers eiusmod.</p>
+                      <p className="more-info">We combine recruitment insight with clear writing to produce application materials that present your achievements and match the roles you want.</p>
                     </div>
                   </div>
                 </div>

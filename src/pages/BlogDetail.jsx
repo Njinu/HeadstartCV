@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
+import ApplyForm from '../components/ApplyForm'
 
 export default function BlogDetail(){
   const { id } = useParams()
@@ -15,6 +16,29 @@ export default function BlogDetail(){
       .catch(err=>{ if(mounted){ setError(String(err)); setLoading(false) } })
     return ()=>{ mounted=false }
   },[id])
+
+  // after post content is injected, find any in-content Apply buttons/links and
+  // style them and wire them to toggle the same Apply form used on this page.
+  useEffect(()=>{
+    if(!post) return
+    const contentEl = document.querySelector('.blog-detail .content')
+    if(!contentEl) return
+    const candidates = contentEl.querySelectorAll('a,button')
+    const toggle = () => { const el = document.getElementById('apply-form-wrapper'); if(el){ el.style.display = el.style.display === 'none' ? 'block' : 'none' } }
+    const handlers = []
+    candidates.forEach(el=>{
+      try{
+        const text = (el.textContent||'').trim().toLowerCase()
+        if(text && text.includes('apply')){
+          el.classList.add('orange-button')
+          const h = (e)=>{ e.preventDefault(); toggle() }
+          el.addEventListener('click', h)
+          handlers.push({el,h})
+        }
+      }catch(e){}
+    })
+    return ()=>{ handlers.forEach(h=>h.el.removeEventListener('click', h.h)) }
+  },[post])
 
   if(loading) return <div className="container"><p>Loading…</p></div>
   if(error) return <div className="container"><p>Error: {error}</p></div>
@@ -47,6 +71,14 @@ export default function BlogDetail(){
               <div className="content" dangerouslySetInnerHTML={{__html: sanitizeContent(post.content.rendered)}} />
             </div>
           </div>
+        </div>
+
+        <div style={{marginTop:20}}>
+          <button className="orange-button" onClick={()=>{ const el = document.getElementById('apply-form-wrapper'); if(el){ el.style.display = el.style.display === 'none' ? 'block' : 'none' } }}>Apply</button>
+        </div>
+
+        <div id="apply-form-wrapper" style={{display:'none', marginTop:20, maxWidth:680, marginLeft:'auto', marginRight:'auto'}}>
+          <ApplyForm jobUrl={window.location.href} submitLabel={'Apply for this role'} />
         </div>
 
         <p><Link to="/blog" className="main-button">Back to Blog</Link></p>
