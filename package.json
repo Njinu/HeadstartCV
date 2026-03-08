@@ -5,6 +5,7 @@
   "description": "Lightweight React site for HeadStart CV (Netlify-ready)",
   "scripts": {
     "dev": "vite",
+    "prebuild": "node scripts/copy-template-assets.js",
     "build": "vite build",
     "preview": "vite preview"
   },
