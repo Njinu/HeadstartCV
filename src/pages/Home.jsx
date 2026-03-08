@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { WP_SITE } from '../config'
 import { Link } from 'react-router-dom'
 
 const WHATSAPP_NUMBER = import.meta.env.VITE_WHATSAPP_NUMBER || ''
@@ -10,7 +11,7 @@ export default function Home(){
 
   useEffect(()=>{
     let mounted = true
-    const SITE = 'https://public-api.wordpress.com/wp/v2/sites/aspyre7.wordpress.com'
+    const SITE = WP_SITE
     fetch(`${SITE}/categories`)
       .then(r=>r.json())
       .then(cats=>{

@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import PageHeading from '../components/PageHeading'
-
-const SITE = 'https://public-api.wordpress.com/wp/v2/sites/aspyre7.wordpress.com'
+import { WP_SITE as SITE } from '../config'
 
 export default function Blog(){
   const [posts, setPosts] = useState([])

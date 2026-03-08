@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import ApplyForm from '../components/ApplyForm'
+import { WP_SITE as SITE } from '../config'
 
 export default function BlogDetail(){
   const { id } = useParams()
@@ -10,7 +11,7 @@ export default function BlogDetail(){
 
   useEffect(()=>{
     let mounted = true
-    fetch(`https://public-api.wordpress.com/wp/v2/sites/aspyre7.wordpress.com/posts/${id}?_embed`)
+    fetch(`${SITE}/posts/${id}?_embed`)
       .then(r=>r.json())
       .then(data=>{ if(mounted){ setPost(data); setLoading(false) } })
       .catch(err=>{ if(mounted){ setError(String(err)); setLoading(false) } })
