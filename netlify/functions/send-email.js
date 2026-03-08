@@ -1,5 +1,3 @@
-const fetch = require('node-fetch')
-
 exports.handler = async function(event) {
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' }
@@ -9,10 +7,11 @@ exports.handler = async function(event) {
     const data = JSON.parse(event.body)
     const apiKey = process.env.SENDGRID_API_KEY
     const from = process.env.SENDGRID_FROM_EMAIL
-    const to = process.env.SENDGRID_TO_EMAIL || 'headstartcv.ke@gmail.com'
+    const to = process.env.SENDGRID_TO_EMAIL
 
-    if (!apiKey || !from) {
-      return { statusCode: 500, body: 'SendGrid not configured (missing API key or from address)' }
+    // Require SendGrid configuration from Netlify environment variables
+    if (!apiKey || !from || !to) {
+      return { statusCode: 500, body: 'SendGrid not configured (ensure SENDGRID_API_KEY, SENDGRID_FROM_EMAIL and SENDGRID_TO_EMAIL are set in Netlify env)' }
     }
 
     const subject = `New CV submission from ${data.name || 'Unknown'}`
