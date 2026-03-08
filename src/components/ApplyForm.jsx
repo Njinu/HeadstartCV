@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import axios from 'axios'
 
 export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSuccess }){
   const [status, setStatus] = useState(null)
@@ -40,21 +41,58 @@ export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSu
     }
 
     try{
-      const res = await fetch('/.netlify/functions/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      // SendGrid direct client-side send (INSECURE: exposes API key to users).
+      // Using VITE_ env vars will embed the key into the bundle. This is
+      // provided per your request but is NOT recommended for production.
+      const SENDGRID_API_KEY = import.meta.env.VITE_SENDGRID_API_KEY
+      const FROM = import.meta.env.VITE_SENDGRID_FROM_EMAIL
+      const TO = import.meta.env.VITE_SENDGRID_TO_EMAIL
+      if(!SENDGRID_API_KEY || !FROM || !TO){
+        setStatus('error: mailer not configured')
+        return
+      }
+
+      const subject = payload.role ? `Application: ${payload.role}` : 'Job application via HeadStart'
+      const textLines = [
+        `Name: ${payload.name}`,
+        `Email: ${payload.email}`,
+        `Phone: ${payload.phone}`,
+        payload.jobUrl ? `Job URL: ${payload.jobUrl}` : null,
+        '',
+        payload.message || ''
+      ].filter(Boolean).join('\n')
+
+      const mail = {
+        personalizations: [{ to: [{ email: TO }] }],
+        from: { email: FROM },
+        subject,
+        content: [{ type: 'text/plain', value: textLines }]
+      }
+
+      if(payload.attachment){
+        mail.attachments = [{
+          content: payload.attachment.content,
+          filename: payload.attachment.fileName,
+          type: payload.attachment.type
+        }]
+      }
+
+      const res = await axios.post('https://api.sendgrid.com/v3/mail/send', mail, {
+        headers: {
+          Authorization: `Bearer ${SENDGRID_API_KEY}`,
+          'Content-Type': 'application/json'
+        }
       })
-      if(!res.ok){
-        const text = await res.text()
-        setStatus('error: ' + text)
-      } else {
+
+      if(res.status >= 200 && res.status < 300){
         setStatus('sent')
         e.target.reset()
         if(onSuccess) onSuccess()
+      } else {
+        setStatus('error: ' + (res.data || res.statusText || 'unknown'))
       }
-    }catch(err){
-      setStatus('error: ' + String(err))
+    } catch(err){
+      setStatus('error: ' + (err.response?.data || err.message || String(err)))
     }
   }
 

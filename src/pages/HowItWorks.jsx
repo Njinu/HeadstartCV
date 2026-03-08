@@ -3,58 +3,7 @@ import PageHeading from '../components/PageHeading'
 import ApplyForm from '../components/ApplyForm'
 
 export default function HowItWorks(){
-  const [status, setStatus] = useState(null)
-
-  async function handleSubmit(e){
-    e.preventDefault()
-    setStatus('sending')
-    const fd = new FormData(e.target)
-    const payload = {
-      name: fd.get('full-name') || '',
-      email: fd.get('email') || '',
-      phone: fd.get('phone-number') || '',
-      role: fd.get('role') || '',
-      message: fd.get('message') || ''
-    }
-
-    // attach CV if provided
-    const file = fd.get('cv')
-    if (file && file.size) {
-      try{
-        const base64 = await new Promise((res, rej) => {
-          const reader = new FileReader()
-          reader.onload = () => res(reader.result.split(',')[1])
-          reader.onerror = rej
-          reader.readAsDataURL(file)
-        })
-        payload.attachment = {
-          fileName: file.name,
-          content: base64,
-          type: file.type || 'application/octet-stream'
-        }
-      }catch(err){
-        // continue without attachment if encoding fails
-        console.warn('CV encoding failed', err)
-      }
-    }
-
-    try{
-      const res = await fetch('/.netlify/functions/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
-      })
-      if(!res.ok){
-        const text = await res.text()
-        setStatus('error: ' + text)
-      } else {
-        setStatus('sent')
-        e.target.reset()
-      }
-    }catch(err){
-      setStatus('error: ' + String(err))
-    }
-  }
+  // Submission is handled by the reusable <ApplyForm /> component.
 
   return (
     <>
