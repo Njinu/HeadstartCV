@@ -1,15 +1,36 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 
 <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>HeadStart CV v2 (Vite)</title>
+    <title>HeadStart CV v2 (React-No-Vite)</title>
+    <!-- React via CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel Standalone (for JSX support without a build step) -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 </head>
 
 <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
+
+    <script type="text/babel">
+        function App() {
+            return (
+                <div style={{ textAlign: 'center', padding: '50px' }}>
+                    <h1>HeadStart CV v2 (React via CDN - NO BUILD)</h1>
+                    <p>This version uses <strong>zero build tools</strong> (no Vite, no Webpack).</p>
+                    <p>If you see this, then your Netlify site is successfully hosting static files!</p>
+                    <hr />
+                    <p>Status: ONLINE</p>
+                    <p>Date: {new Date().toLocaleString()}</p>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 
 </html>
