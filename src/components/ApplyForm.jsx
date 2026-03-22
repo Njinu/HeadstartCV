@@ -1,10 +1,35 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 
-export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSuccess }){
+export default function ApplyForm({ jobUrl = '', submitLabel = 'Submit Application', onSuccess }) {
   const [status, setStatus] = useState(null)
+  const [file, setFile] = useState(null)
+  const [isDragging, setIsDragging] = useState(false)
 
-  async function handleSubmit(e){
+  const handleDragOver = (e) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }
+
+  const handleDragLeave = () => {
+    setIsDragging(false)
+  }
+
+  const handleDrop = (e) => {
+    e.preventDefault()
+    setIsDragging(false)
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      setFile(e.dataTransfer.files[0])
+    }
+  }
+
+  const handleFileChange = (e) => {
+    if (e.target.files && e.target.files[0]) {
+      setFile(e.target.files[0])
+    }
+  }
+
+  async function handleSubmit(e) {
     e.preventDefault()
     setStatus('sending')
     const fd = new FormData(e.target)
@@ -18,12 +43,11 @@ export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSu
 
     // include job URL if provided
     const job = fd.get('jobUrl') || jobUrl || ''
-    if(job) payload.jobUrl = job
+    if (job) payload.jobUrl = job
 
-    // attach CV if provided
-    const file = fd.get('cv')
-    if (file && file.size) {
-      try{
+    // attach CV from state
+    if (file) {
+      try {
         const base64 = await new Promise((res, rej) => {
           const reader = new FileReader()
           reader.onload = () => res(reader.result.split(',')[1])
@@ -35,70 +59,31 @@ export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSu
           content: base64,
           type: file.type || 'application/octet-stream'
         }
-      }catch(err){
+      } catch (err) {
         console.warn('CV encoding failed', err)
       }
     }
 
-    try{
-      // SendGrid direct client-side send (INSECURE: exposes API key to users).
-      // Using VITE_ env vars will embed the key into the bundle. This is
-      // provided per your request but is NOT recommended for production.
-      const SENDGRID_API_KEY = import.meta.env.VITE_SENDGRID_API_KEY
-      const FROM = import.meta.env.VITE_SENDGRID_FROM_EMAIL
-      const TO = import.meta.env.VITE_SENDGRID_TO_EMAIL
-      if(!SENDGRID_API_KEY || !FROM || !TO){
-        setStatus('error: mailer not configured')
-        return
-      }
+    try {
+      // Send to Netlify Function (securely handles Gmail SMTP)
+      const res = await axios.post('/.netlify/functions/send-email', payload)
 
-      const subject = payload.role ? `Application: ${payload.role}` : 'Job application via HeadStart'
-      const textLines = [
-        `Name: ${payload.name}`,
-        `Email: ${payload.email}`,
-        `Phone: ${payload.phone}`,
-        payload.jobUrl ? `Job URL: ${payload.jobUrl}` : null,
-        '',
-        payload.message || ''
-      ].filter(Boolean).join('\n')
-
-      const mail = {
-        personalizations: [{ to: [{ email: TO }] }],
-        from: { email: FROM },
-        subject,
-        content: [{ type: 'text/plain', value: textLines }]
-      }
-
-      if(payload.attachment){
-        mail.attachments = [{
-          content: payload.attachment.content,
-          filename: payload.attachment.fileName,
-          type: payload.attachment.type
-        }]
-      }
-
-      const res = await axios.post('https://api.sendgrid.com/v3/mail/send', mail, {
-        headers: {
-          Authorization: `Bearer ${SENDGRID_API_KEY}`,
-          'Content-Type': 'application/json'
-        }
-      })
-
-      if(res.status >= 200 && res.status < 300){
+      if (res.status >= 200 && res.status < 300) {
         setStatus('sent')
+        setFile(null)
         e.target.reset()
-        if(onSuccess) onSuccess()
+        if (onSuccess) onSuccess()
       } else {
-        setStatus('error: ' + (res.data || res.statusText || 'unknown'))
+        setStatus('error: ' + (res.data?.error || res.statusText || 'unknown'))
       }
-    } catch(err){
-      setStatus('error: ' + (err.response?.data || err.message || String(err)))
+    } catch (err) {
+      setStatus('error: ' + (err.response?.data?.error || err.message || 'unknown error'))
     }
   }
 
   return (
     <div className="get-free-quote">
-      <form id="free-quote" onSubmit={handleSubmit} role="search">
+      <form id="free-quote" onSubmit={handleSubmit}>
         <div className="row">
           <div className="col-lg-12">
             <div className="section-heading">
@@ -120,19 +105,63 @@ export default function ApplyForm({ jobUrl = '', submitLabel = 'Upload CV', onSu
               <input type="phone-number" name="phone-number" id="phone-number" placeholder="Phone Number (optional)" autoComplete="tel" />
             </fieldset>
           </div>
-          <div style={{display:'none'}}>
+          <div style={{ display: 'none' }}>
             <input type="hidden" name="jobUrl" value={jobUrl} />
           </div>
+
           <div className="col-lg-12">
             <fieldset>
-              <input type="file" name="cv" id="cv" accept=".pdf,.doc,.docx" />
+              <div
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+                onClick={() => document.getElementById('cv-input').click()}
+                style={{
+                  border: isDragging ? '2px solid #5b03e4' : '2px dashed #ddd',
+                  borderRadius: '23px',
+                  padding: '40px 20px',
+                  textAlign: 'center',
+                  background: isDragging ? 'rgba(91, 3, 228, 0.05)' : '#fff',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  marginBottom: '20px'
+                }}
+              >
+                <i className="fa fa-cloud-upload" style={{ fontSize: '32px', color: '#5b03e4', marginBottom: '10px', display: 'block' }}></i>
+                {file ? (
+                  <p style={{ color: '#2a2a2a', fontWeight: '600' }}>
+                    <i className="fa fa-file-text" style={{ marginRight: '8px' }}></i>
+                    {file.name}
+                  </p>
+                ) : (
+                  <p style={{ color: '#afafaf', fontSize: '14px' }}>
+                    Drag & Drop your CV here or <span style={{ color: '#5b03e4', fontWeight: '600' }}>Browse</span>
+                    <br />
+                    <small>Accepted formats: .pdf, .doc, .docx</small>
+                  </p>
+                )}
+                <input
+                  type="file"
+                  id="cv-input"
+                  style={{ display: 'none' }}
+                  accept=".pdf,.doc,.docx"
+                  onChange={handleFileChange}
+                />
+              </div>
             </fieldset>
           </div>
+
           <div className="col-lg-12">
             <fieldset>
               <button type="submit" id="form-submit" className="orange-button">{submitLabel}</button>
             </fieldset>
-            {status && <p className="mt-2">{status}</p>}
+            {status && <p className="mt-2" style={{
+              color: status === 'sent' ? '#28a745' : (status.startsWith('error') ? '#dc3545' : '#5b03e4'),
+              fontWeight: '600',
+              textAlign: 'center'
+            }}>
+              {status === 'sent' ? '✓ Application sent successfully!' : (status === 'sending' ? 'Sending application...' : status)}
+            </p>}
           </div>
         </div>
       </form>
