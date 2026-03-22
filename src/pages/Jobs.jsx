@@ -3,39 +3,39 @@ import { Link } from 'react-router-dom'
 import PageHeading from '../components/PageHeading'
 import { WP_SITE as SITE } from '../config'
 
-export default function Jobs(){
+export default function Jobs() {
   const [posts, setPosts] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  useEffect(()=>{
+  useEffect(() => {
     let mounted = true
     fetch(`${SITE}/categories`)
-      .then(r=>r.json())
-      .then(cats=>{
-        const cat = cats.find(c=>c.slug && c.slug.toLowerCase().includes('job'))
-        if(cat && cat.id){
+      .then(r => r.json())
+      .then(cats => {
+        const cat = cats.find(c => c.slug && c.slug.toLowerCase().includes('job'))
+        if (cat && cat.id) {
           return fetch(`${SITE}/posts?categories=${cat.id}&_embed`)
         }
         return fetch(`${SITE}/posts?_embed`)
       })
-      .then(r=>r.json())
-      .then(data=>{ if(mounted){ setPosts(data); setLoading(false) } })
-      .catch(err=>{ if(mounted){ setError(String(err)); setLoading(false) } })
+      .then(r => r.json())
+      .then(data => { if (mounted) { setPosts(data); setLoading(false) } })
+      .catch(err => { if (mounted) { setError(String(err)); setLoading(false) } })
 
-    return ()=>{ mounted=false }
-  },[])
+    return () => { mounted = false }
+  }, [])
 
-  const getThumb = (post) => {
-    try{
-      const fm = post._embedded && post._embedded['wp:featuredmedia'] && post._embedded['wp:featuredmedia'][0]
-      if(!fm) return null
-      // prefer medium size if available
+  const getThumb = (p) => {
+    try {
+      const fm = p._embedded && p._embedded['wp:featuredmedia'] && p._embedded['wp:featuredmedia'][0]
+      if (!fm) return null
       const sizes = fm.media_details && fm.media_details.sizes
-      if(sizes && sizes.medium) return sizes.medium.source_url
-      if(sizes && sizes.thumbnail) return sizes.thumbnail.source_url
+      if (sizes && sizes.medium) return sizes.medium.source_url
+      if (sizes && sizes.medium_large) return sizes.medium_large.source_url
+      if (sizes && sizes.thumbnail) return sizes.thumbnail.source_url
       return fm.source_url || null
-    }catch(e){ return null }
+    } catch (e) { return null }
   }
 
   return (
@@ -66,17 +66,17 @@ export default function Jobs(){
               {error && (
                 <div className="col-12"><p className="text-danger">Error loading posts: {error}</p></div>
               )}
-              {!loading && !error && posts.length===0 && (
+              {!loading && !error && posts.length === 0 && (
                 <div className="col-12"><p>No job posts found.</p></div>
               )}
-              {!loading && !error && posts.map(p=> {
+              {!loading && !error && posts.map(p => {
                 const thumb = getThumb(p)
                 return (
                   <div className="col-lg-4" key={p.id}>
                     <div className="job-item down-content">
                       {thumb && <img src={thumb} alt="thumbnail" className="img-fluid mb-2" />}
-                      <h5 dangerouslySetInnerHTML={{__html: p.title.rendered}} />
-                      <p dangerouslySetInnerHTML={{__html: p.excerpt.rendered}} />
+                      <h5 dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
+                      <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
                       <p><Link to={`/blog/${p.id}`} className="main-button">Read</Link></p>
                     </div>
                   </div>
