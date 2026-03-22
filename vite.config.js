@@ -6,7 +6,6 @@ export default defineConfig({
     outDir: 'dist'
   }
   ,
-  // Serve the existing `template/` folder as the static public directory
-  // so template assets (images, fonts, css, js) are available without copying.
-  publicDir: '../template'
+  // Use the default 'public' folder now that assets are moved inside the project.
+  publicDir: 'public'
 })
