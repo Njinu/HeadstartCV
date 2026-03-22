@@ -1,36 +1,28 @@
-<!DOCTYPE html>
-<html>
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HeadStart CV</title>
 
-<head>
-    <meta charset="UTF-8" />
-    <title>HeadStart CV v2 (React-No-Vite)</title>
-    <!-- React via CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <!-- Babel Standalone (for JSX support without a build step) -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-</head>
-
-<body>
+    <!-- Template & vendor CSS served from ../template via Vite publicDir -->
+    <link href="/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/fontawesome.css">
+    <link rel="stylesheet" href="/assets/css/templatemo-tale-seo-agency.css">
+    <link rel="stylesheet" href="/assets/css/owl.css">
+    <link rel="stylesheet" href="/assets/css/animate.css">
+    <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css" />
+  </head>
+  <body>
     <div id="root"></div>
-
-    <script type="text/babel">
-        function App() {
-            return (
-                <div style={{ textAlign: 'center', padding: '50px' }}>
-                    <h1>HeadStart CV v2 (React via CDN - NO BUILD)</h1>
-                    <p>This version uses <strong>zero build tools</strong> (no Vite, no Webpack).</p>
-                    <p>If you see this, then your Netlify site is successfully hosting static files!</p>
-                    <hr />
-                    <p>Status: ONLINE</p>
-                    <p>Date: {new Date().toLocaleString()}</p>
-                </div>
-            );
-        }
-
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
-    </script>
-</body>
-
+    <!-- Template scripts (jQuery, Bootstrap, plugins) served from template/ publicDir -->
+    <script src="/vendor/jquery/jquery.min.js"></script>
+    <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/assets/js/isotope.min.js"></script>
+    <script src="/assets/js/owl-carousel.js"></script>
+    <script src="/assets/js/tabs.js"></script>
+    <script src="/assets/js/popup.js"></script>
+    <script src="/assets/js/custom.js"></script>
+    <script type="module" src="/src/main.jsx"></script>
+  </body>
 </html>
