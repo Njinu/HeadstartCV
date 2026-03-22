@@ -72,12 +72,16 @@ export default function Jobs() {
               {!loading && !error && posts.map(p => {
                 const thumb = getThumb(p)
                 return (
-                  <div className="col-lg-4" key={p.id}>
-                    <div className="job-item down-content">
-                      {thumb && <img src={thumb} alt="thumbnail" className="img-fluid mb-2" />}
+                  <div className="col-lg-4 col-md-6 mb-4" key={p.id}>
+                    <div className="job-item blog-item down-content">
+                      {thumb && (
+                        <div className="thumb mb-3">
+                          <img src={thumb} alt="" className="img-fluid" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 10 }} />
+                        </div>
+                      )}
                       <h5 dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
-                      <p dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
-                      <p><Link to={`/blog/${p.id}`} className="main-button">Read</Link></p>
+                      <div className="excerpt mb-3" dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
+                      <p><Link to={`/blog/${p.id}`} className="main-button">Read More</Link></p>
                     </div>
                   </div>
                 )
