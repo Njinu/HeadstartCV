@@ -10,7 +10,6 @@ export default function Blog() {
 
   useEffect(() => {
     let mounted = true
-    // resolve category id for blog posts (slug contains 'blog')
     fetch(`${SITE}/categories`)
       .then(r => r.json())
       .then(cats => {
@@ -26,21 +25,31 @@ export default function Blog() {
     return () => { mounted = false }
   }, [])
 
-  // Resolve thumbnail from WordPress embedded data
+  // NUCLEAR EXTRACTOR: Finds ANY WordPress upload link in the post data
   const getThumb = (p) => {
     try {
+      // 1. Check standard featured fields first
+      if (p.jetpack_featured_media_url) return p.jetpack_featured_media_url
       const fm = p._embedded && p._embedded['wp:featuredmedia'] && p._embedded['wp:featuredmedia'][0]
-      if (!fm) return null
-      const sizes = fm.media_details && fm.media_details.sizes
-      if (sizes && sizes.medium) return sizes.medium.source_url
-      if (sizes && sizes.medium_large) return sizes.medium_large.source_url
-      if (sizes && sizes.thumbnail) return sizes.thumbnail.source_url
-      return fm.source_url || null
+      if (fm) {
+        const sizes = fm.media_details && fm.media_details.sizes
+        if (sizes && sizes.medium) return sizes.medium.source_url
+        if (sizes && sizes.full) return sizes.full.source_url
+        return fm.source_url
+      }
+
+      // 2. SEARCH EVERYTHING for any "wp-content/uploads" link (Nuclear Fallback)
+      const fullString = JSON.stringify(p)
+      // Look for any link ending in an image format that lives in the uploads folder
+      const uploadsMatch = fullString.match(/https:\/\/[^"'>\s]+\/wp-content\/uploads\/[^"'>\s]+\.(?:png|jpg|jpeg|gif|webp)/i)
+      if (uploadsMatch && uploadsMatch[0]) return uploadsMatch[0]
+
+      return null
     } catch (e) { return null }
   }
 
-  if (loading) return <div className="container"><p>Loading posts…</p></div>
-  if (error) return <div className="container"><p>Error: {error}</p></div>
+  if (loading) return <div className="container" style={{ padding: '100px 0' }}><p>Loading posts…</p></div>
+  if (error) return <div className="container" style={{ padding: '100px 0' }}><p>Error: {error}</p></div>
 
   return (
     <>
@@ -53,15 +62,17 @@ export default function Blog() {
                 const img = getThumb(post)
                 return (
                   <div className="col-lg-4 col-md-6 mb-4" key={post.id}>
-                    <div className="blog-item down-content">
+                    <div className="blog-item down-content" style={{ background: '#fff', borderRadius: 23, overflow: 'hidden', boxShadow: '0px 0px 15px rgba(0,0,0,0.05)', height: '100%', paddingBottom: 20 }}>
                       {img && (
-                        <div className="thumb mb-3">
-                          <img src={img} alt="" className="img-fluid" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 10 }} />
+                        <div className="thumb">
+                          <img src={img} alt="" className="img-fluid" style={{ width: '100%', height: 260, objectFit: 'cover' }} />
                         </div>
                       )}
-                      <h4 dangerouslySetInnerHTML={{ __html: post.title.rendered }} />
-                      <p dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} />
-                      <Link to={`/blog/${post.id}`} className="main-button">Read More</Link>
+                      <div className="p-4">
+                        <h4 dangerouslySetInnerHTML={{ __html: post.title.rendered }} style={{ fontSize: 20, marginBottom: 15 }} />
+                        <div className="excerpt mb-3" dangerouslySetInnerHTML={{ __html: post.excerpt.rendered }} style={{ fontSize: 14, color: '#666' }} />
+                        <Link to={`/blog/${post.id}`} className="main-button" style={{ color: '#5b03e4', fontWeight: 600 }}>Read More</Link>
+                      </div>
                     </div>
                   </div>
                 )

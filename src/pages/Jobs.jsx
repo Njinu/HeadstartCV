@@ -22,21 +22,34 @@ export default function Jobs() {
       .then(r => r.json())
       .then(data => { if (mounted) { setPosts(data); setLoading(false) } })
       .catch(err => { if (mounted) { setError(String(err)); setLoading(false) } })
-
     return () => { mounted = false }
   }, [])
 
+  // NUCLEAR EXTRACTOR: Finds ANY WordPress upload link in the post data
   const getThumb = (p) => {
     try {
+      // 1. Check standard featured fields first
+      if (p.jetpack_featured_media_url) return p.jetpack_featured_media_url
       const fm = p._embedded && p._embedded['wp:featuredmedia'] && p._embedded['wp:featuredmedia'][0]
-      if (!fm) return null
-      const sizes = fm.media_details && fm.media_details.sizes
-      if (sizes && sizes.medium) return sizes.medium.source_url
-      if (sizes && sizes.medium_large) return sizes.medium_large.source_url
-      if (sizes && sizes.thumbnail) return sizes.thumbnail.source_url
-      return fm.source_url || null
+      if (fm) {
+        const sizes = fm.media_details && fm.media_details.sizes
+        if (sizes && sizes.medium) return sizes.medium.source_url
+        if (sizes && sizes.full) return sizes.full.source_url
+        return fm.source_url
+      }
+
+      // 2. SEARCH EVERYTHING for any "wp-content/uploads" link (Nuclear Fallback)
+      const fullString = JSON.stringify(p)
+      // Look for any link ending in an image format that lives in the uploads folder
+      const uploadsMatch = fullString.match(/https:\/\/[^"'>\s]+\/wp-content\/uploads\/[^"'>\s]+\.(?:png|jpg|jpeg|gif|webp)/i)
+      if (uploadsMatch && uploadsMatch[0]) return uploadsMatch[0]
+
+      return null
     } catch (e) { return null }
   }
+
+  if (loading) return <div className="container" style={{ padding: '100px 0' }}><p>Loading job posts…</p></div>
+  if (error) return <div className="container" style={{ padding: '100px 0' }}><p className="text-danger">Error: {error}</p></div>
 
   return (
     <>
@@ -44,28 +57,23 @@ export default function Jobs() {
         <div className="container">
           <div className="row">
             <div className="col-lg-7 align-self-center">
-              <div className="caption  header-text">
+              <div className="caption header-text">
                 <h6>CAREERS</h6>
                 <div className="line-dec"></div>
                 <h4>Explore <em>Job</em> Opportunities</h4>
               </div>
             </div>
             <div className="col-lg-5">
-              <img src="/assets/images/job.jpg" alt="Jobs header" />
+              <img src="/assets/images/job.jpg" alt="Jobs header" className="img-fluid" style={{ borderRadius: 25 }} />
             </div>
           </div>
         </div>
       </div>
+
       <div className="jobs section">
         <div className="container">
           <div className="main-content">
             <div className="row">
-              {loading && !error && (
-                <div className="col-12"><p>Loading job posts…</p></div>
-              )}
-              {error && (
-                <div className="col-12"><p className="text-danger">Error loading posts: {error}</p></div>
-              )}
               {!loading && !error && posts.length === 0 && (
                 <div className="col-12"><p>No job posts found.</p></div>
               )}
@@ -73,15 +81,17 @@ export default function Jobs() {
                 const thumb = getThumb(p)
                 return (
                   <div className="col-lg-4 col-md-6 mb-4" key={p.id}>
-                    <div className="job-item blog-item down-content">
+                    <div className="job-item blog-item down-content" style={{ background: '#fff', borderRadius: 23, overflow: 'hidden', boxShadow: '0px 0px 15px rgba(0,0,0,0.05)', height: '100%', paddingBottom: 20 }}>
                       {thumb && (
-                        <div className="thumb mb-3">
-                          <img src={thumb} alt="" className="img-fluid" style={{ width: '100%', height: 200, objectFit: 'cover', borderRadius: 10 }} />
+                        <div className="thumb">
+                          <img src={thumb} alt="" className="img-fluid" style={{ width: '100%', height: 260, objectFit: 'cover' }} />
                         </div>
                       )}
-                      <h5 dangerouslySetInnerHTML={{ __html: p.title.rendered }} />
-                      <div className="excerpt mb-3" dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} />
-                      <p><Link to={`/blog/${p.id}`} className="main-button">Read More</Link></p>
+                      <div className="p-4">
+                        <h5 dangerouslySetInnerHTML={{ __html: p.title.rendered }} style={{ fontSize: 20, marginBottom: 15 }} />
+                        <div className="excerpt mb-3" dangerouslySetInnerHTML={{ __html: p.excerpt.rendered }} style={{ fontSize: 14, color: '#666' }} />
+                        <Link to={`/blog/${p.id}`} className="main-button" style={{ color: '#c03afe', fontWeight: 600 }}>Read More</Link>
+                      </div>
                     </div>
                   </div>
                 )
