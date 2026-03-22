@@ -65,8 +65,8 @@ export default function ApplyForm({ jobUrl = '', submitLabel = 'Submit Applicati
     }
 
     try {
-      // Send to Netlify Function (securely handles Gmail SMTP)
-      const res = await axios.post('/.netlify/functions/send-email', payload)
+      // Send to Secure Vercel API (handles Gmail SMTP securely)
+      const res = await axios.post('/api/send-email', payload)
 
       if (res.status >= 200 && res.status < 300) {
         setStatus('sent')

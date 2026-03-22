@@ -1,0 +1,14 @@
+# Netlify Configuration for HeadStart CV
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[functions]
+  # Tell Netlify to look in the 'api' folder too so you can use the same code as Vercel!
+  directory = "api"
+
+[[redirects]]
+  # React Router Single Page App support
+  from = "/*"
+  to = "/index.html"
+  status = 200
